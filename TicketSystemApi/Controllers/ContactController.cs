@@ -10,7 +10,7 @@ using System;
 
 namespace TicketSystemApi.Controllers
 {
-    [RoutePrefix("api/contact")]
+    [RoutePrefix("api/ticket")]
     public class ContactController : ApiController
     {
         private readonly ICrmService _crmService;
@@ -21,21 +21,21 @@ namespace TicketSystemApi.Controllers
         }
 
         [HttpGet]
-        [Route("contact-url/{phoneNumber}")]
-        public IHttpActionResult GetContactUrlByPhone(string phoneNumber)
+        [Route("customer")]
+        public IHttpActionResult GetContactUrlByPhone([FromUri] string number)
         {
             try
             {
                 var service = _crmService.GetService();
 
-                var query = new QueryExpression("contact")
+                var query = new QueryExpression("phone")
                 {
                     ColumnSet = new ColumnSet("contactid"),
                     Criteria =
             {
                 Conditions =
                 {
-                    new ConditionExpression("mobilephone", ConditionOperator.Equal, phoneNumber)
+                    new ConditionExpression("mobilephone", ConditionOperator.Equal, number)
                 }
             }
                 };
@@ -43,15 +43,18 @@ namespace TicketSystemApi.Controllers
                 var contacts = service.RetrieveMultiple(query);
                 var contact = contacts.Entities.FirstOrDefault();
 
-                if (contact == null)
-                {
-                    return Ok(ApiResponse<object>.Error("No contact found with this phone number"));
-                }
-
-                Guid contactId = contact.Id;
-
                 string baseUrl = ConfigurationManager.AppSettings["CrmBaseUrl"];
-                string crmUrl = $"{baseUrl}/main.aspx?pagetype=entityrecord&etn=contact&id={contactId}";
+                string crmUrl;
+
+                if (contact != null)
+                {
+                    Guid contactId = contact.Id;
+                    crmUrl = $"{baseUrl}/main.aspx?pagetype=entityrecord&etn=contact&id={contactId}";
+                }
+                else
+                {
+                    crmUrl = $"{baseUrl}/main.aspx?pagetype=entityrecord&etn=contact";
+                }
 
                 return Ok(ApiResponse<object>.Success(new { url = crmUrl }));
             }
