@@ -10,7 +10,7 @@ using System;
 
 namespace TicketSystemApi.Controllers
 {
-    [RoutePrefix("api/ticket")]
+    [RoutePrefix("ticket")]
     public class ContactController : ApiController
     {
         private readonly ICrmService _crmService;
@@ -22,20 +22,20 @@ namespace TicketSystemApi.Controllers
 
         [HttpGet]
         [Route("customer")]
-        public IHttpActionResult GetContactUrlByPhone([FromUri] string number)
+        public IHttpActionResult GetContactUrlByPhone([FromUri] string phone)
         {
             try
             {
                 var service = _crmService.GetService();
 
-                var query = new QueryExpression("phone")
+                var query = new QueryExpression("contact")
                 {
                     ColumnSet = new ColumnSet("contactid"),
                     Criteria =
             {
                 Conditions =
                 {
-                    new ConditionExpression("mobilephone", ConditionOperator.Equal, number)
+                    new ConditionExpression("mobilephone", ConditionOperator.Equal, phone)
                 }
             }
                 };
