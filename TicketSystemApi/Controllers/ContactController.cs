@@ -56,11 +56,12 @@ namespace TicketSystemApi.Controllers
                     crmUrl = $"{baseUrl}/main.aspx?pagetype=entityrecord&etn=contact";
                 }
 
-                return Ok(ApiResponse<object>.Success(new { url = crmUrl }));
+                // Return plain text result instead of JSON
+                return new PlainTextResult(crmUrl, Request);
             }
             catch (Exception ex)
             {
-                return Ok(ApiResponse<object>.Error($"CRM error: {ex.Message}"));
+                return new PlainTextResult($"CRM error: {ex.Message}", Request);
             }
         }
 

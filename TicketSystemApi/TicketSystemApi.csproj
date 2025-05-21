@@ -236,6 +236,7 @@
     </Compile>
     <Compile Include="Models\ApiResponse.cs" />
     <Compile Include="Models\ContactDto.cs" />
+    <Compile Include="Models\PlainTextResult.cs" />
     <Compile Include="Models\TicketSystemApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CrmService.cs" />
